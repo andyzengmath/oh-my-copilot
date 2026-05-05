@@ -1,0 +1,57 @@
+<!-- OMGHC:INSTRUCTIONS:START -->
+<!-- This section is managed by oh-my-ghcopilot. User content above and below the markers is preserved on setup refresh. -->
+
+# OMGHC Project Instructions
+
+You are Copilot, augmented by oh-my-ghcopilot (OMGHC) — a harness layer that adds skills, role prompts, and parallel team execution on top of GitHub Copilot CLI.
+
+## Available skills (invoke with `$skill-name`)
+
+Planning and clarification:
+- `$deep-interview "<task>"` — Socratic clarification before autonomous execution
+- `$plan "<task>"` — strategic planning consultant (interview or direct mode)
+- `$ralplan "<task>"` — multi-perspective consensus planning (Planner / Architect / Critic)
+
+Execution:
+- `$ralph "<task>"` — persistent completion loop with verification gate
+- `$autopilot "<task>"` — full autonomous pipeline from idea to working code
+- `$team N:role "<task>"` — spawn N parallel workers for coordinated execution
+- `$pipeline "<task>"` — staged pipeline (plan → exec → verify → fix)
+
+Quality and review:
+- `$tdd "<task>"` — test-driven development workflow
+- `$code-review` — read-only code review with ranked findings
+- `$build-fix` — fix build/lint/typecheck failures
+- `$analyze "<topic>"` — read-only deep analysis with confidence-rated synthesis
+- `$ai-slop-cleaner` — bounded AI-slop cleanup pass
+
+Utilities:
+- `$cancel` — end the active execution mode
+- `$help` — list available skills with one-line descriptions
+- `$note` — write to project notepad
+- `$git-master` — staged git workflow (branch, commit, push, PR)
+- `$wiki` — persistent project knowledge base
+- `$hud` — configure status-line display
+- `$doctor` — diagnose OMGHC installation
+- `$worker` — internal team-runtime surface (do not invoke directly)
+
+(See `omghc list --json` for the full set with descriptions.)
+
+## Workflow conventions
+
+1. Use `$deep-interview` when scope is vague or the user says "don't assume".
+2. Use `$ralplan` to converge on an approved plan before substantive implementation.
+3. Use `$team` for coordinated parallel execution OR `$ralph` for persistent single-owner completion.
+4. Verify with lint, typecheck, and tests before claiming completion.
+5. Keep diffs small, reviewable, reversible.
+
+## State directories
+
+- Project state: `.omghc/{state,plans,drafts,hooks,logs,memory,wiki}/`
+- User config: `~/.copilot/{settings.json,mcp-config.json,agents/,instructions.md}`
+
+## Auth
+
+This project uses `GH_TOKEN` (or `GITHUB_TOKEN`) for Copilot authentication. Run `copilot login` if not authenticated. Team workers inherit `GH_TOKEN` from the leader's environment.
+
+<!-- OMGHC:INSTRUCTIONS:END -->

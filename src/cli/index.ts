@@ -1,6 +1,12 @@
 import { runVersion } from "./version.js";
 import { runHelp } from "./help.js";
 import { runStatus } from "./status.js";
+import { runSetup } from "./setup.js";
+import { runDoctor } from "./doctor.js";
+import { runUninstall } from "./uninstall.js";
+import { runList } from "./list.js";
+import { runUpdate } from "./update.js";
+import { runSetupFinalizeMcp } from "./setup-finalize-mcp.js";
 
 type SubcommandHandler = (args: string[]) => Promise<number>;
 
@@ -12,12 +18,17 @@ const SUBCOMMANDS: Record<string, SubcommandHandler> = {
   "--help": runHelp,
   "-h": runHelp,
   status: runStatus,
+  setup: runSetup,
+  doctor: runDoctor,
+  uninstall: runUninstall,
+  list: runList,
+  update: runUpdate,
 };
 
 const STUBS = [
-  "setup", "doctor", "exec", "team", "hud", "wiki", "explore",
-  "question", "state", "trace", "mcp-serve", "uninstall", "update",
-  "list", "agents-init", "reasoning", "tmux-hook", "hooks", "notify",
+  "exec", "team", "hud", "wiki", "explore",
+  "question", "state", "trace", "mcp-serve",
+  "agents-init", "reasoning", "tmux-hook", "hooks", "notify",
   "cancel",
 ];
 
@@ -28,13 +39,18 @@ export async function runCli(args: string[]): Promise<number> {
     return runHelp([]);
   }
 
+  // Special routing: `omghc setup --finalize-mcp` → runSetupFinalizeMcp
+  if (subcommand === "setup" && rest.includes("--finalize-mcp")) {
+    return runSetupFinalizeMcp(rest.filter((a) => a !== "--finalize-mcp"));
+  }
+
   const handler = SUBCOMMANDS[subcommand];
   if (handler) {
     return handler(rest);
   }
 
   if (STUBS.includes(subcommand)) {
-    process.stdout.write(`omghc ${subcommand}: not implemented yet (planned for M1+)\n`);
+    process.stdout.write(`omghc ${subcommand}: not implemented yet (planned for M2+)\n`);
     return 0;
   }
 

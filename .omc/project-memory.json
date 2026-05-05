@@ -32,44 +32,146 @@
   "hotPaths": [
     {
       "path": "tsconfig.json",
-      "accessCount": 4,
-      "lastAccessed": 1778005834917,
-      "type": "file"
-    },
-    {
-      "path": "",
-      "accessCount": 2,
-      "lastAccessed": 1778001477321,
-      "type": "directory"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 2,
-      "lastAccessed": 1778005764745,
-      "type": "file"
-    },
-    {
-      "path": "src\\cli\\omghc.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778005765035,
-      "type": "file"
-    },
-    {
-      "path": "src\\cli\\__tests__\\omghc-smoke.test.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778005767828,
+      "accessCount": 9,
+      "lastAccessed": 1778012036802,
       "type": "file"
     },
     {
       "path": "src\\cli\\index.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778005767970,
+      "accessCount": 8,
+      "lastAccessed": 1778015027333,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\omghc.ts",
+      "accessCount": 7,
+      "lastAccessed": 1778012036261,
+      "type": "file"
+    },
+    {
+      "path": "src\\catalog\\reader.ts",
+      "accessCount": 7,
+      "lastAccessed": 1778012193281,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 6,
+      "lastAccessed": 1778012024613,
       "type": "file"
     },
     {
       "path": "src\\cli\\version.ts",
+      "accessCount": 6,
+      "lastAccessed": 1778012031646,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\help.ts",
+      "accessCount": 5,
+      "lastAccessed": 1778012031947,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\status.ts",
+      "accessCount": 5,
+      "lastAccessed": 1778012035225,
+      "type": "file"
+    },
+    {
+      "path": "skills",
+      "accessCount": 4,
+      "lastAccessed": 1778011460002,
+      "type": "directory"
+    },
+    {
+      "path": "src\\cli\\__tests__\\omghc-smoke.test.ts",
+      "accessCount": 4,
+      "lastAccessed": 1778012015126,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 4,
+      "lastAccessed": 1778012021192,
+      "type": "directory"
+    },
+    {
+      "path": "templates\\instructions.md.tmpl",
+      "accessCount": 4,
+      "lastAccessed": 1778012472627,
+      "type": "file"
+    },
+    {
+      "path": "templates\\settings.seed.json",
+      "accessCount": 4,
+      "lastAccessed": 1778012472963,
+      "type": "file"
+    },
+    {
+      "path": "src\\agents\\generateAgentMarkdown.ts",
+      "accessCount": 4,
+      "lastAccessed": 1778012473448,
+      "type": "file"
+    },
+    {
+      "path": "templates\\AGENTS.md",
       "accessCount": 2,
-      "lastAccessed": 1778005768341,
+      "lastAccessed": 1778008063450,
+      "type": "file"
+    },
+    {
+      "path": "skills\\doctor\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1778008177917,
+      "type": "file"
+    },
+    {
+      "path": "skills\\ralph\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1778008686947,
+      "type": "file"
+    },
+    {
+      "path": "skills\\team\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1778008689878,
+      "type": "file"
+    },
+    {
+      "path": "skills\\deep-interview\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1778008721854,
+      "type": "file"
+    },
+    {
+      "path": "skills\\ralplan\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1778008722890,
+      "type": "file"
+    },
+    {
+      "path": "docs\\auth.md",
+      "accessCount": 2,
+      "lastAccessed": 1778011941720,
+      "type": "file"
+    },
+    {
+      "path": "skills\\analyze\\SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1778012027203,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\analyst.md",
+      "accessCount": 2,
+      "lastAccessed": 1778012027310,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\architect.md",
+      "accessCount": 2,
+      "lastAccessed": 1778012080737,
       "type": "file"
     },
     {
@@ -97,15 +199,135 @@
       "type": "file"
     },
     {
-      "path": "src\\cli\\help.ts",
+      "path": "skills\\tdd\\SKILL.md",
       "accessCount": 1,
-      "lastAccessed": 1778005627296,
+      "lastAccessed": 1778007934906,
       "type": "file"
     },
     {
-      "path": "src\\cli\\status.ts",
+      "path": "skills\\cancel\\SKILL.md",
       "accessCount": 1,
-      "lastAccessed": 1778005631982,
+      "lastAccessed": 1778007953798,
+      "type": "file"
+    },
+    {
+      "path": "skills\\help\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008003356,
+      "type": "file"
+    },
+    {
+      "path": "skills\\note\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008016736,
+      "type": "file"
+    },
+    {
+      "path": "skills\\git-master\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008027042,
+      "type": "file"
+    },
+    {
+      "path": "skills\\omghc-setup\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008059867,
+      "type": "file"
+    },
+    {
+      "path": "skills\\worker\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008091170,
+      "type": "file"
+    },
+    {
+      "path": "skills\\ai-slop-cleaner\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008107099,
+      "type": "file"
+    },
+    {
+      "path": "skills\\pipeline\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008109146,
+      "type": "file"
+    },
+    {
+      "path": "skills\\hud\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008126539,
+      "type": "file"
+    },
+    {
+      "path": "skills\\wiki\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008140972,
+      "type": "file"
+    },
+    {
+      "path": "templates\\catalog-manifest.json",
+      "accessCount": 1,
+      "lastAccessed": 1778008263991,
+      "type": "file"
+    },
+    {
+      "path": "src\\agents\\__tests__\\generator.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1778008311500,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\api-reviewer.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008320181,
+      "type": "file"
+    },
+    {
+      "path": "src\\catalog\\__tests__\\reader.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1778008329580,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\code-reviewer.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008401991,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\code-simplifier.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008437106,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\critic.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008452428,
+      "type": "file"
+    },
+    {
+      "path": "skills\\autopilot\\SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008473216,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\debugger.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008494544,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\dependency-expert.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008550187,
+      "type": "file"
+    },
+    {
+      "path": "prompts\\designer.md",
+      "accessCount": 1,
+      "lastAccessed": 1778008586848,
       "type": "file"
     }
   ],

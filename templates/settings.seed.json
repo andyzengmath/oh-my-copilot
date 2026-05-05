@@ -1,0 +1,11 @@
+{
+  "_omghc": {
+    "managed": true,
+    "version": "0.0.1",
+    "comment": "This settings.json is managed by oh-my-ghcopilot. User-authored fields outside the _omghc namespace are preserved on setup refresh."
+  },
+  "preferences": {
+    "theme": "dark",
+    "telemetry": "enabled"
+  }
+}
