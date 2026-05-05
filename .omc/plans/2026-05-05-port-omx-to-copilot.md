@@ -370,9 +370,13 @@ Copilot CLI uses `GH_TOKEN` or `GITHUB_TOKEN` for auth (OAuth-based via `copilot
 ### A.2 — `omghc doctor`
 - Verifies Copilot CLI binary and version.
 - Verifies auth via one of:
-  1. `GH_TOKEN` or `GITHUB_TOKEN` in env, OR
-  2. `~/.copilot/login-cache` (or whatever Copilot CLI's persisted login artifact is — confirm in M0 spike via `copilot help config`).
-- If neither, reports HIGH severity with command: `copilot login`.
+  1. **Env var precedence (per M1a auth spike):** `COPILOT_GITHUB_TOKEN` > `GH_TOKEN` > `GITHUB_TOKEN`. First non-empty wins. (Original plan text said "`GH_TOKEN` or `GITHUB_TOKEN`" — the M1a spike found `COPILOT_GITHUB_TOKEN` is the highest-precedence variant.)
+  2. **Login cache:** parse `${COPILOT_HOME:-~/.copilot}/config.json` for a non-empty `loggedInUsers` array (each entry has `host`, `login` fields). (Original plan text speculated `~/.copilot/login-cache` — the M1a spike confirmed `config.json` is the actual location.)
+- **`copilot login --status` does NOT exist** on Copilot CLI v1.0.40 (spike-confirmed). Doctor MUST NOT invoke `copilot login` — that starts an interactive OAuth device flow and would prompt the user.
+- **BYOK mode:** if `COPILOT_PROVIDER_BASE_URL` is set, doctor notes BYOK mode active but does NOT fail; the user is using their own LLM endpoint with separate auth.
+- If neither env var nor login cache: reports HIGH severity with advice `copilot login`.
+- **MUST NEVER print token contents** to stdout/stderr/logs (security).
+- See `docs/auth.md` for the authoritative auth model and supported token types (fine-grained PAT with "Copilot Requests" permission, OAuth tokens from Copilot CLI app or `gh` CLI app; classic PATs `ghp_*` not supported).
 
 ### A.3 — Team worker auth (`omghc team`)
 - Each tmux pane inherits the leader's env, propagating `GH_TOKEN`.
@@ -497,5 +501,6 @@ Build OMGHC as a TypeScript-only verbatim port of OMX with a rename pass and thr
 
 ## Changelog
 
+- 2026-05-05 15:35 (v2.1) — post-M1a spike correction. §A.2 doctor section updated to reflect actual Copilot CLI v1.0.40 auth model: `COPILOT_GITHUB_TOKEN` > `GH_TOKEN` > `GITHUB_TOKEN` env precedence; `config.json` `loggedInUsers` array (NOT `login-cache`); `copilot login --status` does NOT exist. `docs/auth.md` is the authoritative reference. M1 (a+b) shipped: 21 skills, 33 prompts, 4 templates, 6 CLI subcommands, 6 src modules, 6 test files, 44/44 tests pass.
 - 2026-05-05 13:30 (v2) — post-Architect revision. Renamed `oh-my-copilot`/`omc`/`.omc/` → `oh-my-ghcopilot`/`omghc`/`.omghc/` (CRITICAL npm name collision). Added §A Auth section. Elevated R10 to HIGH/HIGH with M3 day-0 spike. Fixed factual claims (setup.ts: 3,094 LOC; agents-overlay.ts: 686 lines; runtime.ts: 4,752 lines). Fixed M1/M2 MCP ordering (deferred MCP config to M2). Added R-new HTTP-hooks Plan B. Updated D8 cross-CLI cost (3–5 days, not free). Added explicit `src/compat/` net-new directory. Revised effort estimate to 7 weeks. Added §14 ADR.
 - 2026-05-05 13:06 (v1) — initial draft.
