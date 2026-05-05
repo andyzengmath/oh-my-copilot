@@ -1,0 +1,40 @@
+{
+  "name": "oh-my-ghcopilot",
+  "version": "0.0.1",
+  "description": "Comprehensive harness-engineering plugin for GitHub Copilot CLI — analogue of oh-my-codex (OMX).",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "omghc": "dist/cli/omghc.js"
+  },
+  "scripts": {
+    "build": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && tsc && node -e \"require('fs').chmodSync('dist/cli/omghc.js', 0o755)\"",
+    "dev": "tsc --watch",
+    "lint": "biome lint src",
+    "test": "npm run build && node dist/cli/__tests__/omghc-smoke.test.js",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist/",
+    "skills/",
+    "prompts/",
+    "templates/",
+    "plugins/"
+  ],
+  "keywords": [
+    "copilot",
+    "github",
+    "cli",
+    "agents",
+    "orchestration"
+  ],
+  "author": "AndyZ",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.11.0"
+  }
+}

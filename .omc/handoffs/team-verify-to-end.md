@@ -1,0 +1,24 @@
+## Handoff: team-verify → end (M0 complete)
+
+- **Decided**: M0 scaffold passes all acceptance criteria. 14 files created, build clean, `omghc version` prints expected output, 6/6 unit tests pass, dispatcher routes 3 implemented + 20 stub subcommands correctly.
+- **Rejected**: continuing into M1 in this same team. M1 needs ~21 skills ported + setup.ts (3,094 LOC) + agents-overlay (686 lines) + agents.md generator + doctor with auth — too much for one team session and benefits from a fresh team with M1-specific task decomposition.
+- **Risks**: M0 was verified on Windows only (this machine). CI matrix on Linux + macOS + Windows is wired but has not run yet (no GitHub remote configured). User should `git init && git remote add origin ... && git push` to trigger first CI run before M1.
+- **Files** (M0 deliverables, all in repo root unless noted):
+  - `package.json` — `name=oh-my-ghcopilot`, `bin.omghc=dist/cli/omghc.js`, Node >=20, devDeps: typescript ^5.5.0, @types/node ^20.11.0
+  - `tsconfig.json` — strict, target es2022, module nodenext, outDir dist
+  - `tsconfig.no-unused.json` — extends with noUnused* checks
+  - `biome.json` — lint + format
+  - `.gitignore` — excludes `dist/`, `node_modules/`, `.omghc/`, `.omc/state/`, `.omc/logs/`
+  - `LICENSE` (MIT, AndyZ 2026, attributes OMX)
+  - `README.md` — placeholder pointing to plan
+  - `src/cli/{omghc,index,version,help,status}.ts`
+  - `src/cli/__tests__/omghc-smoke.test.ts`
+  - `.github/workflows/ci.yml` — Linux + macOS + Windows matrix
+- **Fixes applied during verify** (lead corrections):
+  - `tsconfig.json` "exclude" no longer drops `**/__tests__/**` (otherwise `npm test` couldn't find compiled tests)
+  - `tsconfig.json` "module"/"moduleResolution" changed `node20` → `nodenext` (TS 5.5 doesn't accept `node20`)
+- **Remaining (this skill's scope)**: 
+  - Initial git commit on `main` (skipped — global CLAUDE.md says never commit without explicit user ask; flagged for user approval)
+  - `git remote add origin ...` and first push (user-decision; depends on whether they want a public GitHub repo yet)
+- **Remaining (next phases)**: M1 (skills + setup + doctor, ~1.5 weeks), M2 (hooks + state + MCP, ~1–1.5 weeks; M2 day-1 hook-schema spike is gating), M3 (team runtime, ~2.5 weeks; M3 day-0 `copilot --prompt` spike is gating), M4 (plugin packaging + polish, ~1 week).
+- **Suggested next session**: spawn a new team `omghc-port-m1` with task decomposition: (a) skills port (parallel 21-way), (b) setup.ts work (sequential single-worker due to file size), (c) agents-overlay port, (d) agents.md generator (rewrite from OMX TOML generator), (e) doctor with auth check, (f) M0 spike: confirm `copilot login --status` exact command.

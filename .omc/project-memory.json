@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1777999659221,
+  "projectRoot": "C:\\Users\\andyzeng\\OneDrive - Microsoft\\Documents\\GitHub\\oh-my-copilot",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {},
+  "hotPaths": [
+    {
+      "path": "tsconfig.json",
+      "accessCount": 4,
+      "lastAccessed": 1778005834917,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 2,
+      "lastAccessed": 1778001477321,
+      "type": "directory"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 2,
+      "lastAccessed": 1778005764745,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\omghc.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778005765035,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\__tests__\\omghc-smoke.test.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778005767828,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\index.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778005767970,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\version.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778005768341,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.no-unused.json",
+      "accessCount": 1,
+      "lastAccessed": 1778005469059,
+      "type": "file"
+    },
+    {
+      "path": "biome.json",
+      "accessCount": 1,
+      "lastAccessed": 1778005486948,
+      "type": "file"
+    },
+    {
+      "path": "LICENSE",
+      "accessCount": 1,
+      "lastAccessed": 1778005528088,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 1,
+      "lastAccessed": 1778005553316,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\help.ts",
+      "accessCount": 1,
+      "lastAccessed": 1778005627296,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\status.ts",
+      "accessCount": 1,
+      "lastAccessed": 1778005631982,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

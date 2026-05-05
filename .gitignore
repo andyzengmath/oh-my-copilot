@@ -1,0 +1,33 @@
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+package-lock.json
+npm-debug.log*
+
+# OMGHC runtime state (project-local)
+.omghc/
+
+# OMC planner workspace (Claude Code planning state)
+.omc/state/
+.omc/logs/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
