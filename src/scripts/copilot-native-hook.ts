@@ -28,10 +28,24 @@ import { appendFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { z } from "zod";
 
+import {
+  type ResumeHint,
+  type ResumeMode,
+  isResumableMode,
+  writeHint,
+} from "../cli/continue.js";
 import { generateOverlay } from "../hooks/agents-overlay.js";
 import { detectKeyword } from "../hooks/keyword-detector.js";
 import { onSessionEnd, onSessionStart } from "../hooks/session.js";
-import { stateWrite, type ModeName, SUPPORTED_MODES } from "../state/operations.js";
+import {
+  type ActiveModeEntry,
+  type ModeName,
+  type ModeState,
+  SUPPORTED_MODES,
+  stateListActive,
+  stateRead,
+  stateWrite,
+} from "../state/operations.js";
 
 // --- Event-name dispatch -----------------------------------------------------
 
@@ -214,7 +228,147 @@ async function handleSessionStart(raw: unknown): Promise<unknown> {
 async function handleSessionEnd(raw: unknown): Promise<unknown> {
   const event = SessionEndSchema.parse(raw);
   onSessionEnd({ workingDirectory: event.cwd });
-  return { ok: true };
+
+  let hintsWritten = 0;
+  try {
+    hintsWritten = writeResumeHintsForActiveModes(event.cwd, event.timestamp);
+  } catch (err) {
+    process.stderr.write(
+      `[copilot-native-hook] resume-hint generation failed: ${
+        err instanceof Error ? err.message : String(err)
+      }\n`,
+    );
+  }
+  return { ok: true, hintsWritten };
+}
+
+/**
+ * For every active mode (per state/operations), write a resume hint to
+ * `<cwd>/.omghc/state/<mode>-resume-hint.json` so `omghc continue` can pick
+ * up where the session left off. Skips modes that are inactive, terminal,
+ * or not resumable (skill-active, autoresearch, ultraqa).
+ */
+function writeResumeHintsForActiveModes(
+  cwd: string,
+  timestampMs: number,
+): number {
+  const active: ActiveModeEntry[] = stateListActive({ workingDirectory: cwd });
+  const capturedAt = new Date(timestampMs).toISOString();
+
+  let written = 0;
+  for (const entry of active) {
+    if (!isResumableMode(entry.mode as string)) continue;
+    if (isTerminalPhase(entry.current_phase)) continue;
+
+    const fullState = stateRead(entry.mode, { workingDirectory: cwd });
+    if (!fullState || fullState.active !== true) continue;
+
+    const hint = buildResumeHint(
+      entry.mode as ResumeMode,
+      fullState,
+      capturedAt,
+    );
+    if (!hint) continue;
+
+    try {
+      writeHint(hint, cwd);
+      written++;
+    } catch (err) {
+      process.stderr.write(
+        `[copilot-native-hook] failed to write hint for ${entry.mode}: ${
+          err instanceof Error ? err.message : String(err)
+        }\n`,
+      );
+    }
+  }
+  return written;
+}
+
+function isTerminalPhase(phase?: string): boolean {
+  if (!phase) return false;
+  const lower = phase.toLowerCase();
+  return (
+    lower === "completed" ||
+    lower === "failed" ||
+    lower === "aborted" ||
+    lower === "done" ||
+    lower === "finished"
+  );
+}
+
+function teamNameFromState(state: ModeState): string | null {
+  const candidate = state.state?.team_name ?? state.state?.name;
+  if (typeof candidate === "string" && candidate.length > 0) return candidate;
+  return null;
+}
+
+function buildResumeHint(
+  mode: ResumeMode,
+  state: ModeState,
+  capturedAt: string,
+): ResumeHint | null {
+  const sessionId = state._meta?.sessionId ?? "";
+  const phase = state.current_phase ?? "unknown";
+  const iteration = typeof state.iteration === "number" ? state.iteration : 0;
+
+  let resumeCommand: string;
+  let nextAction: string;
+
+  switch (mode) {
+    case "team": {
+      const teamName = teamNameFromState(state);
+      if (!teamName) {
+        return null;
+      }
+      resumeCommand = `omghc team resume ${teamName}`;
+      nextAction = `Resume team ${teamName} from ${phase}`;
+      break;
+    }
+    case "ralph": {
+      resumeCommand = "omghc ralph";
+      nextAction = `Continue ralph iteration ${iteration + 1}`;
+      break;
+    }
+    case "ultrawork": {
+      resumeCommand = "omghc ultrawork";
+      nextAction = `Continue ultrawork from ${phase}`;
+      break;
+    }
+    case "autopilot": {
+      resumeCommand = "omghc autopilot";
+      nextAction = `Continue autopilot from ${phase}`;
+      break;
+    }
+    case "ralplan": {
+      resumeCommand = "omghc ralplan";
+      nextAction = `Continue ralplan from ${phase}`;
+      break;
+    }
+    case "deep-interview": {
+      resumeCommand = "omghc deep-interview";
+      nextAction = `Continue deep-interview from ${phase}`;
+      break;
+    }
+    default: {
+      return null;
+    }
+  }
+
+  const hint: ResumeHint = {
+    mode,
+    session_id: sessionId,
+    captured_at: capturedAt,
+    next_action: nextAction,
+    resume_command: resumeCommand,
+  };
+  if (state.current_phase || typeof state.iteration === "number") {
+    const snapshot: Record<string, unknown> = {};
+    if (state.current_phase) snapshot.current_phase = state.current_phase;
+    if (typeof state.iteration === "number") snapshot.iteration = state.iteration;
+    if (state.state) snapshot.state = state.state;
+    hint.state_snapshot = snapshot;
+  }
+  return hint;
 }
 
 async function handleUserPromptSubmitted(raw: unknown): Promise<unknown> {

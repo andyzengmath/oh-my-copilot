@@ -11,7 +11,9 @@ import { runMcpServe } from "./mcp-serve.js";
 import { runState } from "./state.js";
 import { runWiki } from "./wiki.js";
 import { runTrace } from "./trace.js";
-import { runTeam } from "../team/api.js";
+import { runTeam } from "./team.js";
+import { runContinue } from "./continue.js";
+import { runHud } from "./hud.js";
 
 type SubcommandHandler = (args: string[]) => Promise<number>;
 
@@ -33,10 +35,12 @@ const SUBCOMMANDS: Record<string, SubcommandHandler> = {
   wiki: runWiki,
   trace: runTrace,
   team: runTeam,
+  continue: runContinue,
+  hud: runHud,
 };
 
 const STUBS = [
-  "exec", "hud", "explore",
+  "exec", "explore",
   "question",
   "agents-init", "reasoning", "tmux-hook", "hooks", "notify",
   "cancel",
