@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "omghc_state": {
+      "type": "stdio",
+      "command": "omghc",
+      "args": ["mcp-serve", "omghc_state"],
+      "tools": ["*"]
+    },
+    "omghc_memory": {
+      "type": "stdio",
+      "command": "omghc",
+      "args": ["mcp-serve", "omghc_memory"],
+      "tools": ["*"]
+    },
+    "omghc_trace": {
+      "type": "stdio",
+      "command": "omghc",
+      "args": ["mcp-serve", "omghc_trace"],
+      "tools": ["*"]
+    },
+    "omghc_wiki": {
+      "type": "stdio",
+      "command": "omghc",
+      "args": ["mcp-serve", "omghc_wiki"],
+      "tools": ["*"]
+    }
+  }
+}

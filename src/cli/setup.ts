@@ -12,6 +12,7 @@
  *   - MCP server registration (deferred to `omghc setup --finalize-mcp` in M2)
  */
 
+import { spawnSync } from "node:child_process";
 import {
   copyFileSync,
   existsSync,
@@ -42,6 +43,7 @@ const HELP_TEXT = `omghc setup — install OMGHC into a Copilot scope
 USAGE:
   omghc setup [options]
   omghc setup --finalize-mcp     (M2 placeholder)
+  omghc setup --finalize-hooks   (re-run only the project hook write)
 
 OPTIONS:
   --plugin                Plugin mode (default). Agents/instructions install to scope; plugin packaging lands in M4.
@@ -51,6 +53,8 @@ OPTIONS:
   --merge-agents          When instructions.md exists, replace only the OMGHC-managed marker block.
   --force                 Overwrite existing instructions.md / settings.json.
   --dry-run               Print planned operations without writing anything.
+  --no-hooks              Skip writing the project hook file (.github/hooks/oh-my-ghcopilot.json).
+  --finalize-hooks        Run only the project hook write step.
   --help, -h              Show this help.
 
 ENVIRONMENT:
@@ -71,6 +75,8 @@ interface ParsedFlags {
   dryRun: boolean;
   help: boolean;
   finalizeMcp: boolean;
+  finalizeHooks: boolean;
+  noHooks: boolean;
   unknown: string[];
 }
 
@@ -105,6 +111,8 @@ function parseFlags(args: string[]): ParsedFlags {
     dryRun: false,
     help: false,
     finalizeMcp: false,
+    finalizeHooks: false,
+    noHooks: false,
     unknown: [],
   };
   for (const arg of args) {
@@ -122,6 +130,10 @@ function parseFlags(args: string[]): ParsedFlags {
       out.dryRun = true;
     } else if (arg === "--finalize-mcp") {
       out.finalizeMcp = true;
+    } else if (arg === "--finalize-hooks") {
+      out.finalizeHooks = true;
+    } else if (arg === "--no-hooks") {
+      out.noHooks = true;
     } else if (arg === "--scope=user" || arg === "--scope") {
       out.scope = "user";
     } else if (arg === "--scope=project") {
@@ -436,6 +448,121 @@ function printMcpNotice(): void {
   );
 }
 
+const HOOK_EVENTS = [
+  "sessionStart",
+  "sessionEnd",
+  "userPromptSubmitted",
+  "preToolUse",
+  "postToolUse",
+  "errorOccurred",
+] as const;
+
+interface HookWriteResult {
+  status: "wrote" | "skipped" | "unchanged";
+  path?: string;
+  reason?: string;
+}
+
+function findGitProjectRoot(): string | null {
+  const result = spawnSync("git", ["rev-parse", "--show-toplevel"], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  if (result.error || result.status !== 0) return null;
+  const out = (result.stdout || "").trim();
+  return out.length > 0 ? out : null;
+}
+
+function buildHookFileContent(distRoot: string): string {
+  const hookScript = join(distRoot, "scripts", "copilot-native-hook.js");
+  const hookScriptForJson = hookScript.replace(/\\/g, "/");
+  const hooks: Record<string, Array<Record<string, string>>> = {};
+  for (const event of HOOK_EVENTS) {
+    hooks[event] = [
+      {
+        type: "command",
+        bash: `node "${hookScriptForJson}" ${event}`,
+        powershell: `node "${hookScriptForJson}" ${event}`,
+      },
+    ];
+  }
+  return `${JSON.stringify({ version: 1, hooks }, null, 2)}\n`;
+}
+
+function distRootFromRepoRoot(repoRoot: string): string {
+  return join(repoRoot, "dist");
+}
+
+function writeProjectHookFile(
+  paths: ResolvedPaths,
+  flags: ParsedFlags,
+): HookWriteResult {
+  const projectRoot = findGitProjectRoot();
+  if (!projectRoot) {
+    return {
+      status: "skipped",
+      reason:
+        "Project hook write skipped — not a git repo. Initialize git first with `git init` then run `omghc setup --finalize-hooks`.",
+    };
+  }
+
+  const hookDir = join(projectRoot, ".github", "hooks");
+  const hookPath = join(hookDir, "oh-my-ghcopilot.json");
+  const content = buildHookFileContent(distRootFromRepoRoot(paths.repoRoot));
+
+  if (existsSync(hookPath)) {
+    try {
+      const current = readFileSync(hookPath, "utf-8");
+      if (current === content) {
+        return { status: "unchanged", path: hookPath };
+      }
+    } catch {
+      // fall through to write
+    }
+  }
+
+  if (!flags.dryRun) {
+    mkdirSync(hookDir, { recursive: true });
+    writeFileSync(hookPath, content, "utf-8");
+  }
+  return { status: "wrote", path: hookPath };
+}
+
+function printHookWriteResult(result: HookWriteResult): void {
+  if (result.status === "skipped") {
+    process.stderr.write(`omghc setup: ${result.reason ?? "hook write skipped"}\n`);
+    return;
+  }
+  if (result.status === "unchanged") {
+    process.stdout.write(
+      `Project hook file unchanged: ${result.path}\n`,
+    );
+    return;
+  }
+  process.stdout.write(`Project hook file written: ${result.path}\n`);
+  process.stdout.write(
+    "NOTE: file-based hooks are wired up at the schema layer in Copilot CLI v1.0.40 but DO NOT FIRE in production. This file is forward-compat. See docs/copilot-native-hooks.md.\n",
+  );
+}
+
+async function runFinalizeHooks(args: string[]): Promise<number> {
+  const flags = parseFlags(args);
+  if (flags.help) {
+    process.stdout.write(HELP_TEXT);
+    return 0;
+  }
+  try {
+    const paths = resolvePaths(flags.scope);
+    const result = writeProjectHookFile(paths, flags);
+    printHookWriteResult(result);
+    return 0;
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    process.stderr.write(`omghc setup --finalize-hooks: ${message}\n`);
+    return 1;
+  }
+}
+
 function printSummary(
   paths: ResolvedPaths,
   flags: ParsedFlags,
@@ -476,6 +603,11 @@ export async function runSetup(args: string[]): Promise<number> {
   // `omghc setup --finalize-mcp` is a sibling subcommand routed through here.
   if (flags.finalizeMcp) {
     return runSetupFinalizeMcp(args.filter((a) => a !== "--finalize-mcp"));
+  }
+
+  // `omghc setup --finalize-hooks` re-runs only the project hook write.
+  if (flags.finalizeHooks) {
+    return runFinalizeHooks(args.filter((a) => a !== "--finalize-hooks"));
   }
 
   if (flags.unknown.length > 0) {
@@ -523,6 +655,11 @@ export async function runSetup(args: string[]): Promise<number> {
       printLegacyNotice(paths.target);
     }
     printMcpNotice();
+
+    if (!flags.noHooks) {
+      const hookResult = writeProjectHookFile(paths, flags);
+      printHookWriteResult(hookResult);
+    }
 
     printSummary(paths, flags, {
       agentsWritten,

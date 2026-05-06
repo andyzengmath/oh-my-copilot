@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" sessionStart",
+        "powershell": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" sessionStart"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" sessionEnd",
+        "powershell": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" sessionEnd"
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "bash": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" userPromptSubmitted",
+        "powershell": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" userPromptSubmitted"
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" preToolUse",
+        "powershell": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" preToolUse"
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" postToolUse",
+        "powershell": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" postToolUse"
+      }
+    ],
+    "errorOccurred": [
+      {
+        "type": "command",
+        "bash": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" errorOccurred",
+        "powershell": "node \"C:/Users/andyzeng/OneDrive - Microsoft/Documents/GitHub/oh-my-copilot/dist/scripts/copilot-native-hook.js\" errorOccurred"
+      }
+    ]
+  }
+}

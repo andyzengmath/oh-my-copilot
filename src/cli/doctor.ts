@@ -40,23 +40,34 @@ export interface DoctorSummary {
   failed: number;
 }
 
+export type HookProbeStatus = "pass" | "fail" | "inconclusive";
+
+export interface HookProbeResult {
+  status: HookProbeStatus;
+  message: string;
+}
+
 export interface DoctorResult {
   checks: DoctorCheck[];
   summary: DoctorSummary;
+  hookWiringProbe?: HookProbeResult;
 }
 
 const HELP_TEXT = `omghc doctor — diagnose OMGHC + Copilot CLI install
 
 USAGE:
-  omghc doctor [--json]
+  omghc doctor [--json] [--probe-hooks]
 
 OPTIONS:
-  --json     Emit machine-readable JSON output
-  -h, --help Show this help
+  --json          Emit machine-readable JSON output
+  --probe-hooks   Live-probe Copilot CLI hook wiring by firing copilot --prompt
+                  with a temporary marker hook. Off by default — slow and
+                  requires Copilot auth.
+  -h, --help      Show this help
 
 EXIT CODES:
   0  All checks passed (warnings allowed)
-  1  One or more checks failed
+  1  One or more checks failed (probe-hooks FAIL does not change exit code)
 `;
 
 function copilotHome(): string {
@@ -310,6 +321,146 @@ function checkProjectStateWritable(): DoctorCheck {
   }
 }
 
+function findGitProjectRoot(): string | null {
+  const result = spawnSync("git", ["rev-parse", "--show-toplevel"], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  if (result.error || result.status !== 0) return null;
+  const out = (result.stdout || "").trim();
+  return out.length > 0 ? out : null;
+}
+
+function hasCopilotAuth(): boolean {
+  for (const name of ["COPILOT_GITHUB_TOKEN", "GH_TOKEN", "GITHUB_TOKEN"]) {
+    const v = process.env[name];
+    if (v && v.length > 0) return true;
+  }
+  const configPath = join(copilotHome(), "config.json");
+  if (isFile(configPath)) {
+    const users = parseLoggedInUsers(configPath);
+    if (users.length > 0) return true;
+  }
+  return false;
+}
+
+function getCopilotVersion(): string {
+  const r = spawnCopilotVersion();
+  if (!r.ok) return "unknown";
+  return r.stdout.trim().split(/\r?\n/)[0] ?? "unknown";
+}
+
+function safeUnlink(path: string): void {
+  try {
+    if (existsSync(path)) unlinkSync(path);
+  } catch {
+    // Best-effort cleanup
+  }
+}
+
+export function probeHookWiring(): HookProbeResult {
+  const projectRoot = findGitProjectRoot();
+  if (!projectRoot) {
+    return {
+      status: "inconclusive",
+      message:
+        "not inside a git repository; Copilot only loads hooks under <gitRoot>/.github/hooks/",
+    };
+  }
+
+  if (!hasCopilotAuth()) {
+    return {
+      status: "inconclusive",
+      message:
+        "no Copilot auth available; cannot probe live hooks. Set GH_TOKEN or run `copilot login`.",
+    };
+  }
+
+  const random = Math.random().toString(36).slice(2, 10);
+  const hookDir = join(projectRoot, ".github", "hooks");
+  const probeHookPath = join(hookDir, "_omghc-probe.json");
+  const markerPath = join(
+    projectRoot,
+    ".omghc",
+    "state",
+    `.probe-marker-${random}`,
+  );
+  const markerForJson = markerPath.replace(/\\/g, "/");
+  const markerDir = join(projectRoot, ".omghc", "state");
+
+  const bashCmd = `mkdir -p "${markerForJson.replace(/"/g, '\\"').split("/").slice(0, -1).join("/")}" && touch "${markerForJson}" && printf '{"permissionDecision":"allow"}\\n'`;
+  const psCmd = `New-Item -ItemType Directory -Force -Path '${markerDir.replace(/'/g, "''")}' | Out-Null; New-Item -ItemType File -Force -Path '${markerPath.replace(/'/g, "''")}' | Out-Null; Write-Output '{"permissionDecision":"allow"}'`;
+
+  const probeContent = `${JSON.stringify(
+    {
+      version: 1,
+      hooks: {
+        preToolUse: [
+          {
+            type: "command",
+            bash: bashCmd,
+            powershell: psCmd,
+          },
+        ],
+      },
+    },
+    null,
+    2,
+  )}\n`;
+
+  try {
+    mkdirSync(hookDir, { recursive: true });
+    writeFileSync(probeHookPath, probeContent, "utf8");
+  } catch (err) {
+    return {
+      status: "inconclusive",
+      message: `failed to write probe hook: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+
+  const version = getCopilotVersion();
+  let result: HookProbeResult;
+  try {
+    const spawn = spawnSync(
+      "copilot --prompt \"Run 'echo probe' once and exit\" --allow-all-tools",
+      {
+        cwd: projectRoot,
+        stdio: "pipe",
+        encoding: "utf8",
+        shell: true,
+        timeout: 30_000,
+      },
+    );
+
+    if (spawn.error) {
+      result = {
+        status: "inconclusive",
+        message: `copilot spawn error: ${spawn.error.message}`,
+      };
+    } else if (typeof spawn.status === "number" && spawn.status !== 0) {
+      const stderr = (spawn.stderr || "").trim().slice(0, 200);
+      result = {
+        status: "inconclusive",
+        message: `copilot exited with code ${spawn.status}: ${stderr || "no stderr"}`,
+      };
+    } else if (existsSync(markerPath)) {
+      result = {
+        status: "pass",
+        message: "Hook wiring is functional. PreToolUse hooks fire as expected.",
+      };
+    } else {
+      result = {
+        status: "fail",
+        message: `Hook wiring is NOT functional in Copilot CLI ${version}. This is expected on v1.0.40 (per M2a spike). When wiring lands in a future version, this probe will pass.`,
+      };
+    }
+  } finally {
+    safeUnlink(probeHookPath);
+    safeUnlink(markerPath);
+  }
+  return result;
+}
+
 export function runDoctorChecks(): DoctorResult {
   const home = copilotHome();
   const checks: DoctorCheck[] = [
@@ -337,6 +488,12 @@ function statusTag(status: CheckStatus, severity?: CheckSeverity): string {
   return severity ? `[FAIL:${severity.toUpperCase()}]` : "[FAIL]";
 }
 
+function probeStatusTag(status: HookProbeStatus): string {
+  if (status === "pass") return "[PASS]";
+  if (status === "fail") return "[FAIL]";
+  return "[INCONCLUSIVE]";
+}
+
 function formatHuman(result: DoctorResult): string {
   const lines: string[] = [];
   lines.push("omghc doctor");
@@ -348,6 +505,12 @@ function formatHuman(result: DoctorResult): string {
     if (c.advice && c.status !== "ok") {
       lines.push(`         advice: ${c.advice}`);
     }
+  }
+  if (result.hookWiringProbe) {
+    const probe = result.hookWiringProbe;
+    lines.push(
+      `  ${probeStatusTag(probe.status)} Hook wiring probe: ${probe.message}`,
+    );
   }
   lines.push("");
   const { passed, warnings, failed } = result.summary;
@@ -362,8 +525,13 @@ export async function runDoctor(args: string[]): Promise<number> {
     return 0;
   }
   const json = args.includes("--json");
+  const probeHooks = args.includes("--probe-hooks");
 
   const result = runDoctorChecks();
+
+  if (probeHooks) {
+    result.hookWiringProbe = probeHookWiring();
+  }
 
   if (json) {
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
