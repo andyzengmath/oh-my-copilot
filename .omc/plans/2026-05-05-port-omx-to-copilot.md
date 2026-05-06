@@ -1,14 +1,16 @@
 # Plan: Port oh-my-codex (OMX) → oh-my-ghcopilot (OMGHC)
 
 **Author:** AndyZ
-**Date:** 2026-05-05
-**Status:** REVISED v2 (post-Architect findings) — awaiting user approval before any implementation
+**Date:** 2026-05-06
+**Status:** IN EXECUTION (M0 + M1a + M1b + M2a SHIPPED; M2b pending; M3, M4, M5 not started)
 **Source:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-codex` @ v0.15.1
-**Target:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-copilot` (greenfield, currently empty; package will publish as `oh-my-ghcopilot`)
+**Target:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-copilot` (active; `oh-my-ghcopilot` on npm)
 
 **Revision history:**
 - v1 (2026-05-05 13:06) — initial draft. Used names `oh-my-copilot` (npm) / `omc` (binary) / `.omc/` (state).
 - v2 (2026-05-05 13:30) — post-Architect review. Renamed to `oh-my-ghcopilot` / `omghc` / `.omghc/` (CRITICAL: original names taken on npm); added Auth section (HIGH); elevated R10 with M3 day-0 spike (HIGH); fixed factual claims (LOC counts); fixed M1/M2 MCP ordering; added HTTP-hooks Plan B; updated D8 to acknowledge real M3 cost; added formal ADR.
+- v2.1 (2026-05-05 15:35) — post-M1a auth spike. §A.2 doctor section corrected: env precedence is `COPILOT_GITHUB_TOKEN` > `GH_TOKEN` > `GITHUB_TOKEN`; login cache lives in `config.json` `loggedInUsers` array (NOT `login-cache`); `copilot login --status` does not exist. `docs/auth.md` is authoritative.
+- v2.2 (2026-05-06) — post-M2a hooks.json spike. Five corrections: (1) §9 R-new HTTP-POST fallback DELETED — schema only allows `type: "command"`; (2) added 4 confirmed risks: R-hooks-not-wired (CRITICAL — file-based hooks don't fire in v1.0.40 production), R-no-stop-event (HIGH — no Stop event; Ralph continuation needs redesign), R-plugin-install-no-local (MEDIUM), R-cross-platform-hooks (LOW — bash+powershell required); (3) §M2 hooks register at `<projectRoot>/.github/hooks/oh-my-ghcopilot.json`, NOT plugin manifest; (4) §M2 added `omghc doctor --probe-hooks` requirement; (5) `docs/copilot-native-hooks.md` is now authoritative hook reference.
 
 ---
 
@@ -89,7 +91,7 @@ Success means: a Copilot user can run `npm install -g oh-my-ghcopilot && omghc s
 - **Plugin model:** `plugin.json` at plugin root. Required: `name, description, version`. Optional: `author, license, keywords, agents (dir), skills (array|string of dirs), hooks (path to hooks.json), mcpServers (path to .mcp.json)`. Install via `copilot plugin install ./path`. Default marketplaces: `copilot-plugins`, `awesome-copilot`.
 - **Subcommands:** `copilot` (interactive), `copilot mcp {list|get|add|remove}`, `copilot plugin`, `copilot init`, `copilot login`, `copilot update`, `copilot version`, `copilot completion`, `copilot help`.
 - **Slash commands** (relevant): `/agent, /skills, /plan, /plugin, /mcp, /instructions, /init, /delegate, /fleet, /research, /ask, /review, /diff, /undo, /rewind, /session, /resume, /clear, /new, /reset, /compact, /chronicle, /tasks, /share, /export, /yolo, /allow-all, /add-dir, /list-dirs, /reset-allowed-tools, /copy, /changelog, /login, /logout, /user, /pr, /remote, /connect, /feedback, /lsp, /model, /experimental, /theme, /help, /version`.
-- **Hooks:** preToolUse (deny / modify), postToolUse, plus HTTP-POST variant. Declared in plugin's `hooks.json`. **Exact JSON schema NOT verified in v2; M2 day-1 spike is the canonical confirmation.**
+- **Hooks (per M2a spike, see `docs/copilot-native-hooks.md`):** 6 events — `sessionStart`, `sessionEnd`, `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred`. **No `Stop` event.** Hooks discovered at `<gitRoot>/.github/hooks/**/*.json` only (NOT registered via plugin manifest). Schema: `{ version: 1, hooks: { <event>: HookEntry[] } }` where `HookEntry = { type: "command", bash?, powershell?, cwd?, env?, timeoutSec? }` — at least one of `bash`/`powershell` required. **No HTTP variant exists.** **CRITICAL:** file-based hooks DO NOT FIRE in Copilot CLI v1.0.40 production binary; schema validates and processor registers but the bridge from `Session.hooks` to `preToolsExecution` is incomplete. M2b must build for forward-compat.
 
 ### Architectural compatibility verdict
 
@@ -243,7 +245,7 @@ oh-my-copilot/                          (Git repo dir; npm pkg name = oh-my-ghco
 
 ## 8. Phased Roadmap
 
-### M0 — Scaffold (1–2 days)
+### M0 — Scaffold (1–2 days) — **SHIPPED 2026-05-05, commit `f397693`**
 **Acceptance:**
 - [ ] `package.json` with `name=oh-my-ghcopilot`, `bin.omghc=dist/cli/omghc.js`, `engines.node>=20`, `type=module`
 - [ ] `tsconfig.json` strict, `target=es2022`, `module=node20`, `outDir=dist`
@@ -257,7 +259,7 @@ oh-my-copilot/                          (Git repo dir; npm pkg name = oh-my-ghco
 
 ---
 
-### M1 — Core skills, prompts, setup, doctor (1 week)
+### M1 — Core skills, prompts, setup, doctor (1 week) — **SHIPPED 2026-05-05, commits `6dbcb2e` (M1a+M1b) + `41c9ae6` (plan correction)**
 **Acceptance:**
 - [ ] 21 skills copied to `skills/` with rename pass (Codex→Copilot, omx→omghc text refs)
 - [ ] 30+ prompts copied
@@ -287,7 +289,7 @@ oh-my-copilot/                          (Git repo dir; npm pkg name = oh-my-ghco
 
 ---
 
-### M2 — Hooks + State + MCP servers (1 week)
+### M2 — Hooks + State + MCP servers (1 week) — **M2a SHIPPED 2026-05-06, commit `065626a` (4 MCP servers + bootstrap + CLI parity + hooks.json spike); M2b PENDING (hook ports for forward-compat + plugin manifests + `omghc setup --finalize-mcp` + `omghc doctor --probe-hooks`)**
 
 **Day-1 spike (BLOCKS rest of M2):**
 - Install Copilot CLI on a test machine. Register a no-op preToolUse hook in a sample plugin's `hooks.json`. Capture stdin event JSON to file. Confirm exact event shape, exit-code semantics, JSON output contract. Document in `docs/copilot-native-hooks.md`. Lock Copilot CLI version in CI.
@@ -299,8 +301,9 @@ oh-my-copilot/                          (Git repo dir; npm pkg name = oh-my-ghco
 - [ ] `omghc mcp-serve <name>` launches stdio MCP target.
 - [ ] `omghc state {read|write|clear|list}`, `omghc wiki {list|query|lint|refresh}`, `omghc trace {summary|timeline}` CLI parity.
 - [ ] `src/hooks/keyword-detector.ts`, `src/hooks/agents-overlay.ts`, `src/hooks/session.ts` ported.
-- [ ] `plugins/oh-my-ghcopilot/hooks.json` declares preToolUse + postToolUse + sessionStart pointing to `dist/scripts/copilot-native-hook.js` (or HTTP endpoint per Plan B).
-- [ ] `dist/scripts/copilot-native-hook.js` reads stdin JSON, dispatches to OMGHC plugin runtime, writes stdout JSON.
+- [ ] **Per M2a spike correction:** hooks live at `<projectRoot>/.github/hooks/oh-my-ghcopilot.json`, NOT in `plugins/oh-my-ghcopilot/`. (Copilot only discovers hooks under `<gitRoot>/.github/hooks/**/*.json`; plugin manifest does NOT support a `hooks` field.) `omghc setup` writes this file directly to the active project. M2b hook ports build for forward-compat; expect no-op behavior against v1.0.40 (R-hooks-not-wired).
+- [ ] `omghc doctor --probe-hooks`: drops a marker hook into `<projectRoot>/.github/hooks/`, fires `copilot --prompt "list files"`, asserts the marker fired. PASS = Copilot wiring shipped; FAIL = expected today (canonical detection mechanism per R-hooks-not-wired).
+- [ ] `dist/scripts/copilot-native-hook.js` reads stdin JSON, dispatches to OMGHC plugin runtime, writes stdout JSON. **Note:** preToolUse output mapper only forwards `{permissionDecision, permissionDecisionReason}` — other events' outputs are parsed and discarded by Copilot CLI v1.0.40.
 - [ ] **NEW from M1 deferral**: `omghc setup --finalize-mcp` registers OMGHC MCP servers in `~/.copilot/mcp-config.json` with `"command": "omghc"` (which is now globally installed; doctor verifies).
 - [ ] **Plugin chicken-and-egg fix:** plugin's `.mcp.json` must use either (a) `"command": "omghc"` and rely on global install (simplest), OR (b) `"command": "node"` with `args: ["${PLUGIN_ROOT}/dist/scripts/mcp-serve.js", "<server-name>"]` to be self-contained. Pick (a) for v0.x; doctor enforces global install.
 
@@ -396,7 +399,11 @@ Copilot CLI uses `GH_TOKEN` or `GITHUB_TOKEN` for auth (OAuth-based via `copilot
 | # | Risk | Severity | Likelihood | Mitigation |
 |---|------|----------|------------|------------|
 | R1 | Copilot CLI hooks JSON schema differs materially from Codex's | HIGH | MEDIUM | M2 day-1 spike captures exact event JSON. Adapter behind `src/compat/copilot-hook-adapter.ts`. Lock Copilot CLI version in CI. |
-| R-new | Copilot only supports HTTP-POST hooks, not local commands | MEDIUM | LOW–MED | M2 Plan B: lightweight HTTP server in `omghc mcp-serve` (~100 LOC) hosting `/hook/{event}` endpoint. Hooks.json points to URL. |
+| ~~R-new~~ | ~~Copilot only supports HTTP-POST hooks~~ | — | — | **DELETED — disproven by M2a spike.** `hooks.json` schema only allows `type: "command"`; no URL/HTTP variant exists. See `docs/copilot-native-hooks.md`. |
+| R-hooks-not-wired | File-based hooks DO NOT FIRE in Copilot CLI v1.0.40 production binary (schema validates, processor registers, but `preToolsExecution` invocation path is not wired to `Session.hooks`). | CRITICAL | CONFIRMED | M2b hook ports build for forward-compat; no-op behavior expected against v1.0.40. New `omghc doctor --probe-hooks` is the canonical detection mechanism — drops a marker hook, fires a tool call, asserts firing. PASS = wiring landed; FAIL = expected today. |
+| R-no-stop-event | Copilot hooks have NO `Stop` event (6 events: sessionStart, sessionEnd, userPromptSubmitted, preToolUse, postToolUse, errorOccurred). | HIGH | CONFIRMED | Ralph/ultrawork/team continuation cannot port verbatim from OMX. M3 design must use `sessionEnd` hook + persisted re-invocation hint + `omghc continue` wrapper. |
+| R-plugin-install-no-local | `copilot plugin install` does NOT accept local paths (only `owner/repo`, marketplace, archive URLs). | MEDIUM | CONFIRMED | OMGHC's `plugins/oh-my-ghcopilot/` is internal mirror only; plugin distribution requires a marketplace strategy or direct file delivery via `omghc setup`. M4 decision. |
+| R-cross-platform-hooks | Every hook entry must set BOTH `bash` AND `powershell` fields (runtime picks via `process.platform === "win32"`). | LOW | CONFIRMED | `omghc setup` must emit dual-script entries when writing `.github/hooks/oh-my-ghcopilot.json`. Dispatcher script is identical (`node dist/scripts/copilot-native-hook.js <event>`); only invocation prefix differs. |
 | R2 | Plugin manifest fields drift over time | MEDIUM | HIGH | Pin `@github/copilot@<x.y.z>` in CI; track Copilot changelog; `npm run verify:plugin-bundle` as release-gate. |
 | R3 | Custom agent frontmatter doesn't carry all OMX prompt info | MEDIUM | MEDIUM | Use `system` for prompt body; `x-omghc:` namespace for richer metadata; fallback to `~/.omghc/agents-meta/<name>.json`. |
 | R10 (was MEDIUM, now **HIGH/HIGH**) | `copilot --prompt` requires TTY (matching Codex precedent at `runtime.ts:1347-1361`) | HIGH | HIGH | M3 day-0 spike validates. **Fallback path is OMX's interactive tmux pattern; well-trodden, costs ~3 extra days of M3 vs subprocess-worker.** Do NOT commit M3's 2 weeks before this is confirmed. |
@@ -441,7 +448,16 @@ Copilot CLI uses `GH_TOKEN` or `GITHUB_TOKEN` for auth (OAuth-based via `copilot
 
 ---
 
-## 12. Total Effort Estimate (revised)
+## 12. Total Effort Estimate (revised + observed pace as of v2.2)
+
+**Observed pace through M2a (2026-05-06):** M0 + M1a + M1b + M2a delivered in **~6 hours of agent wall-clock time** across 4 team sessions. Original estimate was 7 weeks of "autonomous loop" time — actual pace is 10–20× faster. Two interpretations:
+
+- **Estimate was conservative:** the autonomous-loop multiplier from the v2 plan assumed slower iteration; the team-skill-based parallel execution outpaced that.
+- **Hard parts are still ahead:** M3 team runtime (4,752-LOC `runtime.ts` to port) and M2b hook adapter (Stop-event redesign) may slow significantly. The R-hooks-not-wired finding shifts M2b's character from "build and verify" to "build for forward-compat with no live testing path."
+
+**Recalibrated remaining estimate:** M2b ~2–4h, M3 ~1–2 days (mostly the team runtime port), M4 ~3–6h. Total remaining: **~2–4 days** of agent time to v0.1.0 (vs. original ~3.5 weeks remaining). Caveat: any blocked spike (M3 day-0 `copilot --prompt` headless verification) could push this materially.
+
+### Original v2 estimate (preserved for reference)
 
 | Phase | Estimate | Cumulative |
 |-------|----------|------------|
@@ -501,6 +517,7 @@ Build OMGHC as a TypeScript-only verbatim port of OMX with a rename pass and thr
 
 ## Changelog
 
+- 2026-05-06 (v2.2) — post-M2a spike corrections. **Five plan changes**: (1) §9 R-new HTTP-POST fallback DELETED — impossible per schema (only `type: "command"` exists); (2) §9 added 4 new confirmed risks: R-hooks-not-wired (CRITICAL — file-based hooks don't fire in v1.0.40 production binary), R-no-stop-event (HIGH — no Stop event in Copilot schema; Ralph continuation needs redesign), R-plugin-install-no-local (MEDIUM — `copilot plugin install` rejects local paths), R-cross-platform-hooks (LOW — bash+powershell required per hook entry); (3) §M2 hooks register at `<projectRoot>/.github/hooks/oh-my-ghcopilot.json`, NOT plugin manifest; (4) §M2 added `omghc doctor --probe-hooks` as canonical wiring-detection mechanism; (5) `docs/copilot-native-hooks.md` is now the authoritative hook reference. M2a shipped: 4 MCP servers + bootstrap + CLI parity + 24 new tests, 68/68 total tests pass.
 - 2026-05-05 15:35 (v2.1) — post-M1a spike correction. §A.2 doctor section updated to reflect actual Copilot CLI v1.0.40 auth model: `COPILOT_GITHUB_TOKEN` > `GH_TOKEN` > `GITHUB_TOKEN` env precedence; `config.json` `loggedInUsers` array (NOT `login-cache`); `copilot login --status` does NOT exist. `docs/auth.md` is the authoritative reference. M1 (a+b) shipped: 21 skills, 33 prompts, 4 templates, 6 CLI subcommands, 6 src modules, 6 test files, 44/44 tests pass.
 - 2026-05-05 13:30 (v2) — post-Architect revision. Renamed `oh-my-copilot`/`omc`/`.omc/` → `oh-my-ghcopilot`/`omghc`/`.omghc/` (CRITICAL npm name collision). Added §A Auth section. Elevated R10 to HIGH/HIGH with M3 day-0 spike. Fixed factual claims (setup.ts: 3,094 LOC; agents-overlay.ts: 686 lines; runtime.ts: 4,752 lines). Fixed M1/M2 MCP ordering (deferred MCP config to M2). Added R-new HTTP-hooks Plan B. Updated D8 cross-CLI cost (3–5 days, not free). Added explicit `src/compat/` net-new directory. Revised effort estimate to 7 weeks. Added §14 ADR.
 - 2026-05-05 13:06 (v1) — initial draft.
