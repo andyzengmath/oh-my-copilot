@@ -32,26 +32,32 @@
   "hotPaths": [
     {
       "path": "package.json",
-      "accessCount": 16,
-      "lastAccessed": 1778042351584,
+      "accessCount": 21,
+      "lastAccessed": 1778052457845,
       "type": "file"
     },
     {
       "path": "tsconfig.json",
-      "accessCount": 15,
-      "lastAccessed": 1778042351444,
+      "accessCount": 20,
+      "lastAccessed": 1778052461516,
       "type": "file"
     },
     {
+      "path": "",
+      "accessCount": 18,
+      "lastAccessed": 1778052807756,
+      "type": "directory"
+    },
+    {
       "path": "src\\cli\\index.ts",
-      "accessCount": 10,
-      "lastAccessed": 1778038617364,
+      "accessCount": 14,
+      "lastAccessed": 1778052696164,
       "type": "file"
     },
     {
       "path": "src\\cli\\omghc.ts",
-      "accessCount": 10,
-      "lastAccessed": 1778042594975,
+      "accessCount": 13,
+      "lastAccessed": 1778052570788,
       "type": "file"
     },
     {
@@ -67,10 +73,10 @@
       "type": "file"
     },
     {
-      "path": "",
+      "path": "src\\cli\\__tests__\\omghc-smoke.test.ts",
       "accessCount": 7,
-      "lastAccessed": 1778038066291,
-      "type": "directory"
+      "lastAccessed": 1778052520842,
+      "type": "file"
     },
     {
       "path": "src\\cli\\help.ts",
@@ -85,9 +91,9 @@
       "type": "file"
     },
     {
-      "path": "src\\cli\\__tests__\\omghc-smoke.test.ts",
-      "accessCount": 6,
-      "lastAccessed": 1778049242620,
+      "path": "docs\\auth.md",
+      "accessCount": 5,
+      "lastAccessed": 1778052219255,
       "type": "file"
     },
     {
@@ -118,12 +124,6 @@
       "path": "templates\\AGENTS.md",
       "accessCount": 4,
       "lastAccessed": 1778049259408,
-      "type": "file"
-    },
-    {
-      "path": "docs\\auth.md",
-      "accessCount": 3,
-      "lastAccessed": 1778016731721,
       "type": "file"
     },
     {
