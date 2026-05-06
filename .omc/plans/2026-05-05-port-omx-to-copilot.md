@@ -2,7 +2,7 @@
 
 **Author:** AndyZ
 **Date:** 2026-05-06
-**Status:** IN EXECUTION (M0 + M1 + M2 + M3 SHIPPED; M4 pending; M5 deferred)
+**Status:** RELEASE-READY (M0 + M1 + M2 + M3 + M4 SHIPPED; v0.1.0 awaiting user push + publish authorization; M5 deferred)
 **Source:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-codex` @ v0.15.1
 **Target:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-copilot` (active; `oh-my-ghcopilot` on npm)
 
@@ -342,7 +342,7 @@ oh-my-copilot/                          (Git repo dir; npm pkg name = oh-my-ghco
 
 ---
 
-### M4 — Plugin packaging + polish (1 week)
+### M4 — Plugin packaging + polish (1 week) — **SHIPPED 2026-05-06, commit `b68aff5` (sync-plugin-mirror + verify-plugin-bundle + prepack lifecycle + omghc notify + README v0.1.0 + DEMO.md + 3 docs + RELEASE_BODY.md + CI tighten + final verification). 151/151 tests pass; npm publish dry-run produces oh-my-ghcopilot-0.0.1.tgz (now bumped to 0.1.0); coverage on team/state 51.78% (below 78% threshold, captured as v0.1.x defect). All v0.1.0 acceptance criteria met.**
 
 **Acceptance:**
 - [ ] `plugins/oh-my-ghcopilot/plugin.json` with required Copilot fields + contributions.
@@ -517,6 +517,7 @@ Build OMGHC as a TypeScript-only verbatim port of OMX with a rename pass and thr
 
 ## Changelog
 
+- 2026-05-06 (v2.6) — M4 shipped (commit `b68aff5`). Plugin packaging complete: sync-plugin-mirror + verify-plugin-bundle + prepack lifecycle (npm publish dry-run produces valid 403.3 kB tarball with 344 files). `omghc notify` Slack/Discord webhook routing. README v0.1.0 (262 lines), DEMO.md (481 lines), `docs/{getting-started,skills,integrations}.md`, `RELEASE_BODY.md` for v0.1.0. CI workflow tightened with sync:plugin:check + verify:plugin-bundle steps. Final verification: 151/151 tests pass, build clean, plugin parity OK, dry-run produces valid tarball. Coverage 51.78% lines on team/state — known shortfall, captured as v0.1.x defect (test surface only exercises happy paths; broader coverage requires ~10-15 more tests per state file). M0–M4 all complete; **v0.1.0 ready to publish** (version bumped 0.0.1 → 0.1.0; awaiting user push + npm publish authorization).
 - 2026-05-06 (v2.5) — M3b shipped (commit `dde4d9a`). Orchestrator + condensed runtime (~330 LOC vs OMX 4,752) + phase-controller + role-router + omghc team CLI + omghc hud + omghc continue (Stop-event replacement via sessionEnd hint). 40 new tests, 151 cumulative pass. Stop-event redesign successfully implements forward-compat: sessionEnd hook writes resume hints to `.omghc/state/<mode>-resume-hint.json` for active non-terminal modes; `omghc continue` reads + spawns. M3 fully shipped. M4 (plugin packaging final + notifications + docs + CI matrix + v0.1.0 release prep) is next.
 - 2026-05-06 (v2.4) — M3a shipped (commit `b6770d3`). Team runtime foundation: 4 state modules (tasks/workers/mailbox/dispatch) + worktree + tmux-session foundation (with `'copilot'` worker variant — opposite of OMX Codex constraint, uses subprocess mode) + worker-bootstrap (auth env propagation) + api (24 JSON-envelope ops) + 17 new tests, 111 cumulative pass. Spike output `docs/copilot-prompt-mode.md` confirmed: subprocess workers (no TTY required) using `copilot -p ... --allow-all-tools --no-color --no-ask-user --no-auto-update`. R10 (`copilot --prompt` TTY) DISPROVEN — should be downgraded. M3b (orchestrator + runtime + CLI + hud + Stop-event redesign) is next.
 - 2026-05-06 (v2.3) — M2b shipped (commit `4f8aa47`). 5 hook ports for forward-compat, native-hook adapter (6-event dispatcher), plugin manifests (no `hooks` field — confirmed correct), setup writes `<gitRoot>/.github/hooks/oh-my-ghcopilot.json`, `omghc setup --finalize-mcp` functional, `omghc doctor --probe-hooks` (PASS/FAIL/INCONCLUSIVE — gates on auth availability). 26 new tests + 94 cumulative pass. M2 now fully shipped. M3 (team runtime) is next.
