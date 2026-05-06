@@ -12,7 +12,12 @@
     "dev": "tsc --watch",
     "lint": "biome lint src",
     "test": "npm run build && node dist/cli/__tests__/omghc-smoke.test.js",
-    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "sync:plugin": "node dist/scripts/sync-plugin-mirror.js",
+    "sync:plugin:check": "node dist/scripts/sync-plugin-mirror.js --check",
+    "verify:plugin-bundle": "node dist/scripts/verify-plugin-bundle.js",
+    "prepack": "npm run build && npm run sync:plugin && npm run verify:plugin-bundle",
+    "postpack": "node -e \"console.log('postpack: package built; run npm publish to release')\""
   },
   "engines": {
     "node": ">=20"

@@ -2,7 +2,7 @@
 
 **Author:** AndyZ
 **Date:** 2026-05-06
-**Status:** IN EXECUTION (M0 + M1 + M2 + M3a SHIPPED; M3b, M4, M5 pending)
+**Status:** IN EXECUTION (M0 + M1 + M2 + M3 SHIPPED; M4 pending; M5 deferred)
 **Source:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-codex` @ v0.15.1
 **Target:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-copilot` (active; `oh-my-ghcopilot` on npm)
 
@@ -315,7 +315,7 @@ oh-my-copilot/                          (Git repo dir; npm pkg name = oh-my-ghco
 
 ---
 
-### M3 — Team runtime (2 weeks)
+### M3 — Team runtime (2 weeks) — **SHIPPED 2026-05-06: M3a commit `b6770d3` (4 state modules + worktree + tmux-session foundation + worker-bootstrap + api dispatcher + spike); M3b commit `dde4d9a` (orchestrator + condensed runtime + phase-controller + role-router + omghc team CLI + hud + omghc continue Stop-event redesign + 40 new tests). 151 cumulative tests pass.**
 
 **Day-0 spike (BLOCKS rest of M3) — R10 mitigation:**
 - Validate `copilot --prompt "<task>"` as headless subprocess (no TTY, piped stdin/stdout, exits on completion).
@@ -517,6 +517,7 @@ Build OMGHC as a TypeScript-only verbatim port of OMX with a rename pass and thr
 
 ## Changelog
 
+- 2026-05-06 (v2.5) — M3b shipped (commit `dde4d9a`). Orchestrator + condensed runtime (~330 LOC vs OMX 4,752) + phase-controller + role-router + omghc team CLI + omghc hud + omghc continue (Stop-event replacement via sessionEnd hint). 40 new tests, 151 cumulative pass. Stop-event redesign successfully implements forward-compat: sessionEnd hook writes resume hints to `.omghc/state/<mode>-resume-hint.json` for active non-terminal modes; `omghc continue` reads + spawns. M3 fully shipped. M4 (plugin packaging final + notifications + docs + CI matrix + v0.1.0 release prep) is next.
 - 2026-05-06 (v2.4) — M3a shipped (commit `b6770d3`). Team runtime foundation: 4 state modules (tasks/workers/mailbox/dispatch) + worktree + tmux-session foundation (with `'copilot'` worker variant — opposite of OMX Codex constraint, uses subprocess mode) + worker-bootstrap (auth env propagation) + api (24 JSON-envelope ops) + 17 new tests, 111 cumulative pass. Spike output `docs/copilot-prompt-mode.md` confirmed: subprocess workers (no TTY required) using `copilot -p ... --allow-all-tools --no-color --no-ask-user --no-auto-update`. R10 (`copilot --prompt` TTY) DISPROVEN — should be downgraded. M3b (orchestrator + runtime + CLI + hud + Stop-event redesign) is next.
 - 2026-05-06 (v2.3) — M2b shipped (commit `4f8aa47`). 5 hook ports for forward-compat, native-hook adapter (6-event dispatcher), plugin manifests (no `hooks` field — confirmed correct), setup writes `<gitRoot>/.github/hooks/oh-my-ghcopilot.json`, `omghc setup --finalize-mcp` functional, `omghc doctor --probe-hooks` (PASS/FAIL/INCONCLUSIVE — gates on auth availability). 26 new tests + 94 cumulative pass. M2 now fully shipped. M3 (team runtime) is next.
 - 2026-05-06 (v2.2) — post-M2a spike corrections. **Five plan changes**: (1) §9 R-new HTTP-POST fallback DELETED — impossible per schema (only `type: "command"` exists); (2) §9 added 4 new confirmed risks: R-hooks-not-wired (CRITICAL — file-based hooks don't fire in v1.0.40 production binary), R-no-stop-event (HIGH — no Stop event in Copilot schema; Ralph continuation needs redesign), R-plugin-install-no-local (MEDIUM — `copilot plugin install` rejects local paths), R-cross-platform-hooks (LOW — bash+powershell required per hook entry); (3) §M2 hooks register at `<projectRoot>/.github/hooks/oh-my-ghcopilot.json`, NOT plugin manifest; (4) §M2 added `omghc doctor --probe-hooks` as canonical wiring-detection mechanism; (5) `docs/copilot-native-hooks.md` is now the authoritative hook reference. M2a shipped: 4 MCP servers + bootstrap + CLI parity + 24 new tests, 68/68 total tests pass.

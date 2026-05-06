@@ -30,8 +30,19 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Plugin mirror parity: skills/prompts/agents under plugins/oh-my-ghcopilot/
+      # must match the canonical source trees. Fails CI if the mirror drifted.
+      - name: Plugin mirror parity (sync:plugin --check)
+        run: npm run sync:plugin:check
+
+      - name: Plugin bundle verification
+        run: npm run verify:plugin-bundle
+
       - name: Smoke test (omghc version)
         run: node dist/cli/omghc.js version
 
+      # Tests use node:test and are platform-agnostic. Team-mode tests that
+      # require tmux self-skip when tmux is unavailable (Windows runners), and
+      # worktree tests self-skip when git is unavailable.
       - name: Run tests
         run: npm test

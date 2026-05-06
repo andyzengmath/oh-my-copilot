@@ -14,6 +14,7 @@ import { runTrace } from "./trace.js";
 import { runTeam } from "./team.js";
 import { runContinue } from "./continue.js";
 import { runHud } from "./hud.js";
+import { runNotify } from "./notify.js";
 
 type SubcommandHandler = (args: string[]) => Promise<number>;
 
@@ -37,12 +38,13 @@ const SUBCOMMANDS: Record<string, SubcommandHandler> = {
   team: runTeam,
   continue: runContinue,
   hud: runHud,
+  notify: runNotify,
 };
 
 const STUBS = [
   "exec", "explore",
   "question",
-  "agents-init", "reasoning", "tmux-hook", "hooks", "notify",
+  "agents-init", "reasoning", "tmux-hook", "hooks",
   "cancel",
 ];
 
