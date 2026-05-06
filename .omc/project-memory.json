@@ -31,69 +31,69 @@
   "directoryMap": {},
   "hotPaths": [
     {
+      "path": "package.json",
+      "accessCount": 13,
+      "lastAccessed": 1778038260553,
+      "type": "file"
+    },
+    {
       "path": "tsconfig.json",
-      "accessCount": 9,
-      "lastAccessed": 1778012036802,
+      "accessCount": 12,
+      "lastAccessed": 1778016111571,
       "type": "file"
     },
     {
       "path": "src\\cli\\index.ts",
-      "accessCount": 8,
-      "lastAccessed": 1778015027333,
+      "accessCount": 10,
+      "lastAccessed": 1778038617364,
       "type": "file"
     },
     {
       "path": "src\\cli\\omghc.ts",
-      "accessCount": 7,
-      "lastAccessed": 1778012036261,
+      "accessCount": 9,
+      "lastAccessed": 1778016053657,
       "type": "file"
     },
     {
       "path": "src\\catalog\\reader.ts",
-      "accessCount": 7,
-      "lastAccessed": 1778012193281,
-      "type": "file"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 6,
-      "lastAccessed": 1778012024613,
+      "accessCount": 8,
+      "lastAccessed": 1778016148175,
       "type": "file"
     },
     {
       "path": "src\\cli\\version.ts",
-      "accessCount": 6,
-      "lastAccessed": 1778012031646,
+      "accessCount": 7,
+      "lastAccessed": 1778016011042,
       "type": "file"
     },
     {
+      "path": "",
+      "accessCount": 7,
+      "lastAccessed": 1778038066291,
+      "type": "directory"
+    },
+    {
       "path": "src\\cli\\help.ts",
-      "accessCount": 5,
-      "lastAccessed": 1778012031947,
+      "accessCount": 6,
+      "lastAccessed": 1778016012788,
       "type": "file"
     },
     {
       "path": "src\\cli\\status.ts",
+      "accessCount": 6,
+      "lastAccessed": 1778016013148,
+      "type": "file"
+    },
+    {
+      "path": "src\\cli\\__tests__\\omghc-smoke.test.ts",
       "accessCount": 5,
-      "lastAccessed": 1778012035225,
+      "lastAccessed": 1778016014877,
       "type": "file"
     },
     {
       "path": "skills",
       "accessCount": 4,
       "lastAccessed": 1778011460002,
-      "type": "directory"
-    },
-    {
-      "path": "src\\cli\\__tests__\\omghc-smoke.test.ts",
-      "accessCount": 4,
-      "lastAccessed": 1778012015126,
-      "type": "file"
-    },
-    {
-      "path": "",
-      "accessCount": 4,
-      "lastAccessed": 1778012021192,
       "type": "directory"
     },
     {
@@ -112,6 +112,12 @@
       "path": "src\\agents\\generateAgentMarkdown.ts",
       "accessCount": 4,
       "lastAccessed": 1778012473448,
+      "type": "file"
+    },
+    {
+      "path": "docs\\auth.md",
+      "accessCount": 3,
+      "lastAccessed": 1778016731721,
       "type": "file"
     },
     {
@@ -151,12 +157,6 @@
       "type": "file"
     },
     {
-      "path": "docs\\auth.md",
-      "accessCount": 2,
-      "lastAccessed": 1778011941720,
-      "type": "file"
-    },
-    {
       "path": "skills\\analyze\\SKILL.md",
       "accessCount": 2,
       "lastAccessed": 1778012027203,
@@ -172,6 +172,12 @@
       "path": "prompts\\architect.md",
       "accessCount": 2,
       "lastAccessed": 1778012080737,
+      "type": "file"
+    },
+    {
+      "path": "src\\catalog\\__tests__\\reader.test.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778038241201,
       "type": "file"
     },
     {
@@ -280,12 +286,6 @@
       "path": "prompts\\api-reviewer.md",
       "accessCount": 1,
       "lastAccessed": 1778008320181,
-      "type": "file"
-    },
-    {
-      "path": "src\\catalog\\__tests__\\reader.test.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778008329580,
       "type": "file"
     },
     {

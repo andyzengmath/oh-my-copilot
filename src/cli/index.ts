@@ -7,6 +7,10 @@ import { runUninstall } from "./uninstall.js";
 import { runList } from "./list.js";
 import { runUpdate } from "./update.js";
 import { runSetupFinalizeMcp } from "./setup-finalize-mcp.js";
+import { runMcpServe } from "./mcp-serve.js";
+import { runState } from "./state.js";
+import { runWiki } from "./wiki.js";
+import { runTrace } from "./trace.js";
 
 type SubcommandHandler = (args: string[]) => Promise<number>;
 
@@ -23,11 +27,15 @@ const SUBCOMMANDS: Record<string, SubcommandHandler> = {
   uninstall: runUninstall,
   list: runList,
   update: runUpdate,
+  "mcp-serve": runMcpServe,
+  state: runState,
+  wiki: runWiki,
+  trace: runTrace,
 };
 
 const STUBS = [
-  "exec", "team", "hud", "wiki", "explore",
-  "question", "state", "trace", "mcp-serve",
+  "exec", "team", "hud", "explore",
+  "question",
   "agents-init", "reasoning", "tmux-hook", "hooks", "notify",
   "cancel",
 ];
