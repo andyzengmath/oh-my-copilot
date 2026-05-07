@@ -40,7 +40,7 @@ test("runList(['--json']) returns valid JSON with summary keys and M1a counts", 
   assert.ok("prompts" in parsed, "expected `prompts` key in JSON output");
   assert.ok("agents" in parsed, "expected `agents` key in JSON output");
   assert.ok("summary" in parsed, "expected `summary` key in JSON output");
-  assert.equal(parsed.summary.skills, 21);
+  assert.equal(parsed.summary.skills, 32);
   assert.equal(parsed.summary.prompts, 33);
 });
 
@@ -51,17 +51,17 @@ test("runList(['--json', '--skills-only']) returns only skills", async () => {
   assert.equal(result, 0);
   const parsed = JSON.parse(stdout) as ListJson;
   assert.ok(Array.isArray(parsed.skills), "expected skills to be an array");
-  assert.equal(parsed.skills?.length, 21);
+  assert.equal(parsed.skills?.length, 32);
   assert.equal(parsed.prompts, undefined, "prompts should be omitted");
   assert.equal(parsed.agents, undefined, "agents should be omitted");
 });
 
-test("runList([]) human output contains SKILLS (21): and PROMPTS (33): headers", async () => {
+test("runList([]) human output contains SKILLS (32): and PROMPTS (33): headers", async () => {
   const { result, stdout } = await captureStdoutAsync(() => runList([]));
   assert.equal(result, 0);
   assert.ok(
-    stdout.includes("SKILLS (21):"),
-    `expected 'SKILLS (21):' in output, got:\n${stdout.slice(0, 400)}`,
+    stdout.includes("SKILLS (32):"),
+    `expected 'SKILLS (32):' in output, got:\n${stdout.slice(0, 400)}`,
   );
   assert.ok(
     stdout.includes("PROMPTS (33):"),

@@ -11,28 +11,42 @@ Planning and clarification:
 - `$deep-interview "<task>"` — Socratic clarification before autonomous execution
 - `$plan "<task>"` — strategic planning consultant (interview or direct mode)
 - `$ralplan "<task>"` — multi-perspective consensus planning (Planner / Architect / Critic)
+- `$ralph-init "<feature>"` — initialize a PRD that Ralph can iterate against
+- `$review` — reviewer-only pass (alias for `$plan --review`)
 
 Execution:
 - `$ralph "<task>"` — persistent completion loop with verification gate
 - `$autopilot "<task>"` — full autonomous pipeline from idea to working code
 - `$team N:role "<task>"` — spawn N parallel workers for coordinated execution
+- `$swarm N:role "<task>"` — compatibility alias for `$team`
 - `$pipeline "<task>"` — staged pipeline (plan → exec → verify → fix)
 
 Quality and review:
 - `$tdd "<task>"` — test-driven development workflow
 - `$code-review` — read-only code review with ranked findings
+- `$security-review` — OWASP Top 10 audit + secrets / dependency scan
 - `$build-fix` — fix build/lint/typecheck failures
 - `$analyze "<topic>"` — read-only deep analysis with confidence-rated synthesis
 - `$ai-slop-cleaner` — bounded AI-slop cleanup pass
 
+External advisors (require local CLI installs):
+- `$ask-claude "<question>"` — second opinion via local `claude` CLI
+- `$ask-gemini "<question>"` — second opinion via local `gemini` CLI
+
+Modifiers and modes:
+- `$ecomode` — token-efficient model routing modifier (combine with `$ralph`, `$ultrawork`, etc.)
+- `$deepsearch "<query>"` — thorough codebase search with synthesis
+- `$trace` — show agent flow timeline + summary from `omghc_trace`
+
 Utilities:
-- `$cancel` — end the active execution mode
 - `$help` — list available skills with one-line descriptions
 - `$note` — write to project notepad
 - `$git-master` — staged git workflow (branch, commit, push, PR)
 - `$wiki` — persistent project knowledge base
 - `$hud` — configure status-line display
 - `$doctor` — diagnose OMGHC installation
+- `$configure-notifications` — set up Slack/Discord webhooks for `omghc notify`
+- `$skill <subcommand>` — manage local user/project skills (list / add / edit / etc.)
 - `$worker` — internal team-runtime surface (do not invoke directly)
 
 (See `omghc list --json` for the full set with descriptions.)
@@ -47,7 +61,7 @@ Utilities:
 
 ## State directories
 
-- Project state: `.omghc/{state,plans,drafts,hooks,logs,memory,wiki}/`
+- Project state: `.omghc/{state,plans,drafts,hooks,logs,memory,wiki,artifacts}/`
 - User config: `~/.copilot/{settings.json,mcp-config.json,agents/,instructions.md}`
 
 ## Auth
