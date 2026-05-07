@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 
-**Status:** v0.1.0 — [published on npm](https://www.npmjs.com/package/oh-my-ghcopilot). M0–M4 shipped (166 tests passing on Linux + macOS + Windows).
+**Status:** v0.2.0 — [published on npm](https://www.npmjs.com/package/oh-my-ghcopilot). M0–M5(ε) shipped — **35 bundled skills**, 33 role prompts, 304 tests passing on Linux + macOS + Windows.
 
 OMGHC adds a workflow layer on top of [GitHub Copilot CLI](https://github.com/github/copilot-cli):
 
@@ -233,7 +233,10 @@ Workers are **subprocess-mode** (`copilot --prompt "..." --allow-all-tools --no-
 | M2b — Hook ports + plugin manifests + finalize-mcp + probe-hooks | `4f8aa47`, `a20e6af` | 26 |
 | M3a — Team state + worktree + tmux-session + worker-bootstrap + api | `b6770d3` | 17 |
 | M3b — Orchestrator + runtime + omghc team CLI + hud + omghc continue | `dde4d9a` | 40 |
-| **Total** | **8 commits** | **151+ tests passing** |
+| M4 — Plugin packaging + docs + v0.1.0 release | `b68aff5` | — |
+| v0.1.1 — cleanup + coverage push (302/302 tests) | `11dc7d0` | +136 |
+| v0.2.0(ε) — skill expansion: 14 new skills (21→35) | `90d06e1`, `64ac713` | +2 |
+| **Total** | **15 commits** | **304 tests passing** |
 
 ---
 

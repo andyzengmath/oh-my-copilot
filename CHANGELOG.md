@@ -9,6 +9,43 @@ versioning follows [Semantic Versioning](https://semver.org/).
 
 (no unreleased changes)
 
+## [0.2.0] — 2026-05-07
+
+Skill expansion (ε scope per `.omc/plans/2026-05-07-v0.2.0-skill-expansion.md`): 14 new skills ported from OMX, raising the bundled catalog from 21 → 35 skills. No CLI subcommand changes; all activate via `$keyword` in Copilot sessions.
+
+### Added — quick wins (Wave 1)
+- `$swarm` — compatibility alias for `$team`
+- `$review` — alias for `$plan --review`
+- `$ralph-init` — initialize a PRD that `$ralph` can iterate against
+- `$ecomode` — token-efficient model routing modifier (combines with execution modes)
+- `$deepsearch` — thorough codebase search mode with synthesis output
+- `$trace` — agent flow timeline + summary (uses `omghc_trace` MCP)
+- `$security-review` — OWASP Top 10 audit + secrets / dependency scan
+- `$ask-claude` — second-opinion advisor via local `claude` CLI; artifacts at `.omghc/artifacts/`
+- `$ask-gemini` — second-opinion advisor via local `gemini` CLI; artifacts at `.omghc/artifacts/`
+- `$configure-notifications` — Slack/Discord webhook setup wizard (env-var driven; pairs with `omghc notify`)
+- `$skill` — meta-skill for managing user/project local skills (`~/.copilot/skills/`, `<proj>/.copilot/skills/`)
+
+### Added — killer features (Wave 2)
+- `$autoresearch` — stateful validator-gated research loop with artifact-gated completion (mission-validator-script or prompt-architect-artifact mode); state persists in `.omghc/state/autoresearch-state.json`
+- `$ultrawork` — parallel execution engine (component, not standalone persistence mode); pairs with `$ralph` and team runtime
+- `$ultraqa` — autonomous QA cycling (qa-tester → architect → fix → repeat) with `--tests`/`--build`/`--lint`/`--typecheck`/`--custom` goal modes, max 5 cycles
+
+### Changed
+- `src/hooks/keyword-detector.ts`: added `autoresearch` to `KeywordIntent` type and `KEYWORD_DEFINITIONS` (priority 7). `ultrawork`/`ultraqa` were already present from M3.
+- `templates/instructions.md.tmpl`: added 14 new skill mentions organized by category (Planning / Execution / Quality / External advisors / Modifiers / Utilities).
+
+### Tests
+- 304/304 passing (added 2 keyword-detector tests for `$autoresearch` + bumped `list.test.ts` skill count assertions 21 → 35).
+
+### Forward-compat notes
+- Each killer feature includes a forward-compat note about R-hooks-not-wired (file-based hooks don't fire in Copilot CLI v1.0.40). Until Copilot wires hook execution, run `omghc continue` manually after session restart, or re-invoke the skill to resume from persisted state.
+
+### Excluded from this release
+- `web-clone` skill (HARD DEPRECATED upstream in OMX; "do not start new work")
+- Visual track (`frontend-ui-ux`, `visual-ralph`, `visual-verdict`) — γ scope, deferred to v0.2.1
+- Rust crates port, `omghc_code_intel` MCP server, OMX→OMGHC sync tooling, i18n READMEs — deferred to v0.3.x
+
 ## [0.1.1] — 2026-05-07
 
 ### Removed
@@ -68,6 +105,7 @@ Initial release. TypeScript port of [oh-my-codex (OMX)](https://github.com/Yeach
 ### Acknowledgments
 OMGHC is a structural port of OMX, originally authored by Yeachan Heo and contributors, also licensed under MIT. Skill and prompt content is ported with attribution preserved in file headers.
 
-[Unreleased]: https://github.com/andyzengmath/oh-my-copilot/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/andyzengmath/oh-my-copilot/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/andyzengmath/oh-my-copilot/releases/tag/v0.2.0
 [0.1.1]: https://github.com/andyzengmath/oh-my-copilot/releases/tag/v0.1.1
 [0.1.0]: https://github.com/andyzengmath/oh-my-copilot/releases/tag/v0.1.0
