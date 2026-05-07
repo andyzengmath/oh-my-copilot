@@ -1,6 +1,6 @@
 {
   "name": "oh-my-ghcopilot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Comprehensive harness-engineering plugin for GitHub Copilot CLI — analogue of oh-my-codex (OMX).",
   "type": "module",
   "main": "dist/index.js",

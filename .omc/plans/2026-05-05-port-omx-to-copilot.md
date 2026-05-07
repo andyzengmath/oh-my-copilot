@@ -2,7 +2,7 @@
 
 **Author:** AndyZ
 **Date:** 2026-05-06
-**Status:** RELEASE-READY (M0 + M1 + M2 + M3 + M4 SHIPPED; v0.1.0 awaiting user push + publish authorization; M5 deferred)
+**Status:** SHIPPED (v0.1.0 published 2026-05-06: npm + tag + GitHub release; M0–M4 complete; v0.1.x cleanup ongoing; M5 deferred)
 **Source:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-codex` @ v0.15.1
 **Target:** `C:\Users\andyzeng\OneDrive - Microsoft\Documents\GitHub\oh-my-copilot` (active; `oh-my-ghcopilot` on npm)
 
@@ -348,7 +348,7 @@ oh-my-copilot/                          (Git repo dir; npm pkg name = oh-my-ghco
 - [ ] `plugins/oh-my-ghcopilot/plugin.json` with required Copilot fields + contributions.
 - [ ] `npm run sync:plugin` mirrors `skills/`, `prompts/` (as agents), `agents/` into plugin dir.
 - [ ] `npm run verify:plugin-bundle` parity test.
-- [ ] `copilot plugin install ./plugins/oh-my-ghcopilot` works on clean Copilot install.
+- [x] ~~`copilot plugin install ./plugins/oh-my-ghcopilot` works on clean Copilot install.~~ **INVALIDATED by R-plugin-install-no-local** (M2a spike confirmed `copilot plugin install` rejects local paths — only accepts `owner/repo`, marketplace IDs, archive URLs). Plugin bundle remains a forward-compat artifact for a v0.2.x marketplace listing; OMGHC is delivered via `npm install -g oh-my-ghcopilot` until then.
 - [ ] `npm prepack` runs `build → verify:native-agents → sync:plugin → verify:plugin-bundle`.
 - [ ] Slack/Discord notification routing via `omghc notify`.
 - [ ] `omghc cancel`, `omghc status`, `omghc reasoning {low|medium|high|xhigh}` ported.
@@ -516,6 +516,8 @@ Build OMGHC as a TypeScript-only verbatim port of OMX with a rename pass and thr
 ---
 
 ## Changelog
+
+- 2026-05-06 (v2.7) — **v0.1.0 SHIPPED.** Published to npm as `oh-my-ghcopilot@0.1.0` (411.5 kB tarball, 347 files; npm user `andyzeng3141`); tag `v0.1.0` pushed to `origin` pointing at commit `f379edd`; GitHub release at https://github.com/andyzengmath/oh-my-copilot/releases/tag/v0.1.0. Authentication used a 90-day granular access token with bypass-2FA (initial publish failed with 403 on standard 2FA path; granular token created at npmjs.com/settings/andyzeng3141/tokens, written to `~/.npmrc`). v0.1.x cleanup: removed 8 unimplemented stub subcommands from `src/cli/index.ts` (`cancel`, `reasoning`, `exec`, `explore`, `question`, `agents-init`, `tmux-hook`, `hooks` — typing now returns `unknown subcommand` exit 2 instead of misleading `not implemented yet (planned for M2+)` exit 0); rewrote `src/cli/help.ts` to drop M0/M1/M2/M3/M4 phase tags and 8 stub mentions; wired `src/cli/status.ts` to real `stateListActive()` (was hardcoded `No active modes` with stale `M2 will ship` message — M2 shipped in `065626a`); dropped `cancel` from README "Standard utilities" row; updated README header status from `v0.1.0-pre — not yet published` to `v0.1.0 — published on npm`. Created `CHANGELOG.md` per Keep a Changelog convention. Reconciled M4 line 351 acceptance with R-plugin-install-no-local (struck through; plugin bundle is forward-compat for v0.2.x marketplace listing). Naming reaffirmed: bare `oh-my-copilot` (taken globally by `robinnorberg`) cannot be used; `oh-my-ghcopilot` is correct. Coverage on `src/team/state/` remains 51.78% — captured as v0.1.x defect; coverage push is the next thread.
 
 - 2026-05-06 (v2.6) — M4 shipped (commit `b68aff5`). Plugin packaging complete: sync-plugin-mirror + verify-plugin-bundle + prepack lifecycle (npm publish dry-run produces valid 403.3 kB tarball with 344 files). `omghc notify` Slack/Discord webhook routing. README v0.1.0 (262 lines), DEMO.md (481 lines), `docs/{getting-started,skills,integrations}.md`, `RELEASE_BODY.md` for v0.1.0. CI workflow tightened with sync:plugin:check + verify:plugin-bundle steps. Final verification: 151/151 tests pass, build clean, plugin parity OK, dry-run produces valid tarball. Coverage 51.78% lines on team/state — known shortfall, captured as v0.1.x defect (test surface only exercises happy paths; broader coverage requires ~10-15 more tests per state file). M0–M4 all complete; **v0.1.0 ready to publish** (version bumped 0.0.1 → 0.1.0; awaiting user push + npm publish authorization).
 - 2026-05-06 (v2.5) — M3b shipped (commit `dde4d9a`). Orchestrator + condensed runtime (~330 LOC vs OMX 4,752) + phase-controller + role-router + omghc team CLI + omghc hud + omghc continue (Stop-event replacement via sessionEnd hint). 40 new tests, 151 cumulative pass. Stop-event redesign successfully implements forward-compat: sessionEnd hook writes resume hints to `.omghc/state/<mode>-resume-hint.json` for active non-terminal modes; `omghc continue` reads + spawns. M3 fully shipped. M4 (plugin packaging final + notifications + docs + CI matrix + v0.1.0 release prep) is next.

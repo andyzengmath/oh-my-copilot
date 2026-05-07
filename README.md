@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 
-**Status:** v0.1.0-pre — functional, not yet published. M0+M1+M2+M3 shipped (151+ tests passing).
+**Status:** v0.1.0 — [published on npm](https://www.npmjs.com/package/oh-my-ghcopilot). M0–M4 shipped (166 tests passing on Linux + macOS + Windows).
 
 OMGHC adds a workflow layer on top of [GitHub Copilot CLI](https://github.com/github/copilot-cli):
 
@@ -69,7 +69,7 @@ omghc team 3:executor "fix all TypeScript errors"
 | `omghc mcp-serve <name>` | Launch a stdio MCP server (state/memory/trace/wiki) |
 | `omghc continue [--list\|--clear\|--mode <mode>]` | Resume an interrupted workflow (Stop-event replacement) |
 | `omghc notify --message <text> [--target slack\|discord\|all]` | Webhook notifications |
-| `omghc version`, `omghc help`, `omghc status`, `omghc cancel` | Standard utilities |
+| `omghc version`, `omghc help`, `omghc status` | Standard utilities |
 
 Run `omghc <subcommand> --help` for details on any command.
 

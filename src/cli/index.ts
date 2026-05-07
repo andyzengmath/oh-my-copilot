@@ -41,13 +41,6 @@ const SUBCOMMANDS: Record<string, SubcommandHandler> = {
   notify: runNotify,
 };
 
-const STUBS = [
-  "exec", "explore",
-  "question",
-  "agents-init", "reasoning", "tmux-hook", "hooks",
-  "cancel",
-];
-
 export async function runCli(args: string[]): Promise<number> {
   const [subcommand, ...rest] = args;
 
@@ -63,11 +56,6 @@ export async function runCli(args: string[]): Promise<number> {
   const handler = SUBCOMMANDS[subcommand];
   if (handler) {
     return handler(rest);
-  }
-
-  if (STUBS.includes(subcommand)) {
-    process.stdout.write(`omghc ${subcommand}: not implemented yet (planned for M2+)\n`);
-    return 0;
   }
 
   process.stderr.write(`omghc: unknown subcommand '${subcommand}'. Run 'omghc help' for usage.\n`);

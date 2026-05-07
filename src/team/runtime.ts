@@ -394,6 +394,16 @@ export async function runTeamRuntime(
   }
 }
 
+export const _internals = {
+  assertTeamName,
+  resolveCwd,
+  resolveOptions,
+  identitiesToSlots,
+  snapshotTasks,
+  allTerminal,
+  runVerifyGate,
+};
+
 export async function resumeTeamRuntime(
   team_name: string,
   opts: { workingDirectory?: string } = {},

@@ -297,6 +297,20 @@ function buildHandle(
   };
 }
 
+export const _internals = {
+  assertTeamName,
+  resolveCwd,
+  teamStateDir,
+  metaFilePath,
+  workerName,
+  bootstrapInvocation,
+  aggregateTaskStatus,
+  classifyWorkerState,
+  readMeta,
+  writeMeta,
+  statusFor,
+};
+
 export async function startOrchestrator(
   opts: OrchestratorOptions,
 ): Promise<OrchestratorHandle> {
