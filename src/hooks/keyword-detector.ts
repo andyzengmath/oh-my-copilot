@@ -28,6 +28,7 @@ export type KeywordIntent =
   | "autopilot"
   | "ultrawork"
   | "ultraqa"
+  | "autoresearch"
   | "skill-active"
   | null;
 
@@ -126,6 +127,16 @@ const KEYWORD_DEFINITIONS: KeywordDefinition[] = [
       /\bultraqa\s+(?:mode|workflow|cycle)\b/i,
     ],
     priority: 6,
+  },
+  {
+    intent: "autoresearch",
+    explicit: "$autoresearch",
+    aliases: [],
+    activationPatterns: [
+      /\b(?:use|run|start|enable|launch|invoke|activate)\s+(?:a\s+|an\s+|the\s+)?autoresearch\b/i,
+      /\bautoresearch\s+(?:mode|workflow|loop)\b/i,
+    ],
+    priority: 7,
   },
 ];
 

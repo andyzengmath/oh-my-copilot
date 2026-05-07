@@ -51,3 +51,16 @@ test("detectKeyword: activation phrase without $ matches with medium confidence"
   assert.equal(result.intent, "ralph");
   assert.equal(result.confidence, "medium");
 });
+
+test("detectKeyword: explicit $autoresearch activates autoresearch", () => {
+  const result = detectKeyword("$autoresearch start the validator-gated loop");
+  assert.equal(result.intent, "autoresearch");
+  assert.equal(result.rawKeyword, "$autoresearch");
+  assert.equal(result.confidence, "high");
+});
+
+test("detectKeyword: 'start autoresearch' activation phrase returns medium-confidence autoresearch", () => {
+  const result = detectKeyword("please start autoresearch on the perf hypothesis");
+  assert.equal(result.intent, "autoresearch");
+  assert.equal(result.confidence, "medium");
+});

@@ -19,13 +19,16 @@ Execution:
 - `$autopilot "<task>"` — full autonomous pipeline from idea to working code
 - `$team N:role "<task>"` — spawn N parallel workers for coordinated execution
 - `$swarm N:role "<task>"` — compatibility alias for `$team`
+- `$ultrawork "<task>"` — parallel execution engine (sub-mode of `$ralph`/`$autopilot`)
 - `$pipeline "<task>"` — staged pipeline (plan → exec → verify → fix)
+- `$autoresearch` — stateful validator-gated research loop (artifact-gated completion)
 
 Quality and review:
 - `$tdd "<task>"` — test-driven development workflow
 - `$code-review` — read-only code review with ranked findings
 - `$security-review` — OWASP Top 10 audit + secrets / dependency scan
 - `$build-fix` — fix build/lint/typecheck failures
+- `$ultraqa --tests|--build|--lint|--typecheck` — autonomous QA cycling (qa-tester → architect → fix → repeat)
 - `$analyze "<topic>"` — read-only deep analysis with confidence-rated synthesis
 - `$ai-slop-cleaner` — bounded AI-slop cleanup pass
 
